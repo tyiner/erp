@@ -1,0 +1,95 @@
+stages:
+  - build
+  - deploy
+
+prod-build1:
+  stage: build
+  script:
+    - pwd
+    - ls
+  only:
+    - tags
+  tags:
+    - ltt-mall-prod1
+
+prod-build2:
+  stage: build
+  script:
+    - pwd
+    - ls
+  only:
+    - tags
+  tags:
+    - ltt-mall-prod2
+
+test-build:
+  stage: build
+  script:
+    - pwd
+    - ls
+  only:
+    - test
+  tags:
+    - ltt-mall-test
+
+prod-deploy1:
+  stage: deploy
+  script:
+    - pwd
+    - cd /data/gitlab-runner
+    - mv ltt-mall /data/backup/ltt-mall_`date +%Y-%m-%d-%H-%M`
+    - cp -r /root/builds/LpnYVMTf/0/server/ltt-mall .
+    - cd /data/gitlab-runner/ltt-mall
+    - cp /opt/composer .
+    - cp /opt/.env .
+    - chmod -R 777 storage/
+    - ./composer install
+    - ./composer dump-autoload
+    - chown www.www . -R
+    - pwd
+  only:
+    - tags
+  tags:
+    - ltt-mall-prod1
+
+prod-deploy2:
+  stage: deploy
+  script:
+    - pwd
+    - cd /data/gitlab-runner
+    - mv ltt-mall /data/backup/ltt-mall_`date +%Y-%m-%d-%H-%M`
+    - cp -r /root/builds/u4qyukxq/0/server/ltt-mall .
+    - cd /data/gitlab-runner/ltt-mall
+    - cp /opt/composer .
+    - cp /opt/.env .
+    - chmod -R 777 storage/
+    - ./composer install
+    - ./composer dump-autoload
+    - chown www.www . -R
+    - pwd
+  only:
+    - tags
+  tags:
+    - ltt-mall-prod2
+
+test-deploy:
+  stage: deploy
+  script:
+    - pwd
+    - cd /data/gitlab-runner/ltt-mall
+    - mv ltt-mall /data/backup/ltt-mall/ltt-mall`date +%Y-%m-%d-%H-%M`
+    - cp -r /root/builds/SkZpQVu8/0/server/ltt-mall/ .
+    - cd /data/gitlab-runner/ltt-mall/ltt-mall
+    - chmod -R 777 storage/
+    - cp /opt/composer .
+    - cp /opt/.env .
+    - ./composer install
+    - ./composer dump-autoload
+    - cd /data/gitlab-runner/ltt-mall/ltt-mall/public
+    - ln -s /opt/upload/ upload
+    - cd /data/gitlab-runner/ltt-mall/ltt-mall
+    - chown www.www . -R
+  only:
+    - test
+  tags:
+    - ltt-mall-test

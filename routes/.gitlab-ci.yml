@@ -1,0 +1,119 @@
+stages:
+  - build
+  - deploy
+
+prod-build1:
+  stage: build
+  script:
+    - pwd
+    - ls
+  only:
+    - tags
+  tags:
+    - ltt-mall-prod1
+
+prod-build2:
+  stage: build
+  script:
+    - pwd
+    - ls
+  only:
+    - tags
+  tags:
+    - ltt-mall-prod2
+
+ 
+# release-build:
+#   stage: build
+#   script:
+#     - pwd
+#     - ls
+#   only:
+#     - master
+#   tags:
+#     - ltt-mall-release
+
+test-build:
+  stage: build
+  script:
+    - pwd
+    - ls
+  only:
+    - test
+  tags:
+    - ltt-mall-test
+
+
+prod-deploy1:
+  stage: deploy
+  script:
+    - pwd
+    - cd /data/gitlab-runner
+    - mv ltt-mall /data/backup/ltt-mall_`date +%Y-%m-%d-%H-%M`
+    - cp -r /root/builds/LpnYVMTf/0/suxiong/ltt-mall .
+    - cd /data/gitlab-runner/ltt-mall
+    - cp /opt/composer .
+    - cp /opt/.env .
+    - chmod -R 777 storage/
+    - ./composer install
+    - ./composer dump-autoload
+    - chown www.www . -R
+    - pwd
+  only:
+    - tags
+  tags:
+    - ltt-mall-prod1
+
+prod-deploy2:
+  stage: deploy
+  script:
+    - pwd
+    - cd /data/gitlab-runner
+    - mv ltt-mall /data/backup/ltt-mall_`date +%Y-%m-%d-%H-%M`
+    - cp -r /root/builds/u4qyukxq/0/suxiong/ltt-mall .
+    - cd /data/gitlab-runner/ltt-mall
+    - cp /opt/composer .
+    - cp /opt/.env .
+    - chmod -R 777 storage/
+    - ./composer install
+    - ./composer dump-autoload
+    - chown www.www . -R
+    - pwd
+  only:
+    - tags
+  tags:
+    - ltt-mall-prod2
+
+# release-deploy:
+#   stage: deploy
+#   script:
+#     - pwd
+#     - cd /home/www/builds/FsFCnw2s/0/suxiong/ltt-mall
+#     - chmod -R 777 storage/
+#     - cp /opt/composer .
+#     - cp /opt/.env .
+#     - ./composer install
+#     - ./composer dump-autoload
+#   only:
+#     - master
+#   tags:
+#     - ltt
+
+test-deploy:
+  stage: deploy
+  script:
+    - pwd
+    - cd /home/www/builds/4YQygyDz/0/suxiong/ltt-mall
+    - chmod -R 777 storage/
+    - cp /opt/composer .
+    - cp /opt/.env .
+    - ./composer install
+    - ./composer dump-autoload
+    - cd /home/www/builds/4YQygyDz/0/suxiong/ltt-mall/public
+    - ln -s /opt/upload/ upload
+    - chown www.www /home/www/builds/4YQygyDz/0/suxiong/ltt-mall -R
+    
+  only:
+    - test
+  tags:
+    - ltt-mall-test 
